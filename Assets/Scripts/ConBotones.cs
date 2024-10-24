@@ -29,4 +29,6 @@ public class ConBotones : MonoBehaviour
     {
         SceneManager.LoadScene("ScenaNivel");
     }
+   
 }
+
