@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6107062440063000507}
   - component: {fileID: 1557538503937170305}
   - component: {fileID: 3611083015840259361}
+  - component: {fileID: 6345980222945199925}
   m_Layer: 0
   m_Name: Numeros
   m_TagString: Untagged
@@ -90,3 +91,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 1557538503937170305}
   parentDesMov: {fileID: 0}
+--- !u!114 &6345980222945199925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8470942339652370796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f203db5400ee9a439b6c6b56076650d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  posiblesNumeros:
+  - {fileID: 21300000, guid: f6dc74e541901a34f9ba08b602501907, type: 3}
+  - {fileID: 21300000, guid: 342693b192c5bd340a13fd9b23098ea2, type: 3}
+  - {fileID: 21300000, guid: d919c76e039ae5d4bab455c9b5abb8b4, type: 3}
+  - {fileID: 21300000, guid: 06410b3cc2764c644903b02b9a883e38, type: 3}
+  - {fileID: 21300000, guid: 2a2f193850ac3074dbd9ddaaef8549d6, type: 3}
+  - {fileID: 21300000, guid: 29b4c87cec6563a449ed3510c4815f8b, type: 3}
+  - {fileID: 21300000, guid: aabce1e272ccbfa4fbbb77a4121e6d80, type: 3}
+  - {fileID: 21300000, guid: 642e4e708c6a0544bb853e2a7aa93386, type: 3}
+  - {fileID: 21300000, guid: c53fcac0011d52247868f00f2032a4e7, type: 3}
