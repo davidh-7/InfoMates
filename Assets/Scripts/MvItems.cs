@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
@@ -12,11 +13,14 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
 
+    // Variable estática para almacenar la suma total compartida entre todas las instancias de MvItems
+    private static int sumaTotal = 0;
+
     void Start()
     {
         // Obtenemos el GraphicRaycaster y el EventSystem
         raycaster = GetComponentInParent<GraphicRaycaster>();
-        eventSystem = GetComponent<EventSystem>();
+        eventSystem = EventSystem.current;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -32,19 +36,47 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     {
         Debug.Log("Mover");
         transform.position = Input.mousePosition;
-
-        // Detectamos si hay una imagen debajo
-        DetcImgDebajo();
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log("Soltar");
-        transform.SetParent(parentDesMov);
+
+        // Detectar si hay otro número en el slot donde soltamos
+        ConNum otroNumero = DetectarNumeroDebajo();
+
+        if (otroNumero != null)
+        {
+            // Obtener el valor numérico del objeto actual y el otro número detectado
+            ConNum miNumero = GetComponent<ConNum>();
+            int valorMiNumero = miNumero.ObtenerNumeroSprite();
+            int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
+
+            // Sumar ambos valores
+            int suma = valorMiNumero + valorOtroNumero;
+
+            // Acumular la suma en la variable estática sumaTotal
+            sumaTotal += suma;
+
+            // Mostrar la suma acumulada en TxtResultado
+            Debug.Log("Suma acumulada:" + sumaTotal.ToString());
+            GameObject textSuma = GameObject.Find("TxtResultado");
+            textSuma.GetComponent<TMPro.TextMeshProUGUI>().text = sumaTotal.ToString();
+
+            // Eliminar ambos objetos
+            Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
+            Destroy(gameObject); // Elimina el objeto actual
+        }
+        else
+        {
+            // Volver al padre original si no hay otro número
+            transform.SetParent(parentDesMov);
+        }
+
         image.raycastTarget = true;
     }
 
-    private void DetcImgDebajo()
+    private ConNum DetectarNumeroDebajo()
     {
         // Creamos el PointerEventData
         pointerEventData = new PointerEventData(eventSystem);
@@ -59,12 +91,18 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         // Verificamos los resultados
         foreach (RaycastResult result in results)
         {
-            // Si el resultado es una imagen y no es la que estamos arrastrando
-            if (result.gameObject != gameObject && result.gameObject.GetComponent<Image>() != null)
+            // Si el resultado es una imagen y no es el objeto actual que estamos arrastrando
+            if (result.gameObject != gameObject)
             {
-                Debug.Log("Imagen detectada debajo: " + result.gameObject.name);
-                // Aquí puedes realizar la lógica que desees cuando detectes una imagen debajo
+                // Intentamos obtener el componente ConNum del objeto debajo
+                ConNum conNum = result.gameObject.GetComponent<ConNum>();
+                if (conNum != null)
+                {
+                    return conNum; // Retornamos el otro número si lo encontramos
+                }
             }
         }
+
+        return null; // Retorna null si no se encuentra ningún otro número
     }
 }
