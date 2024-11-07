@@ -16,7 +16,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     {
         // Obtenemos el GraphicRaycaster y el EventSystem
         raycaster = GetComponentInParent<GraphicRaycaster>();
-        eventSystem = GetComponent<EventSystem>();
+        eventSystem = EventSystem.current;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -34,7 +34,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         transform.position = Input.mousePosition;
 
         // Detectamos si hay una imagen debajo
-        DetcImgDebajo();
+        DetectarImagenDebajo();
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -44,7 +44,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         image.raycastTarget = true;
     }
 
-    private void DetcImgDebajo()
+    private void DetectarImagenDebajo()
     {
         // Creamos el PointerEventData
         pointerEventData = new PointerEventData(eventSystem);
@@ -63,8 +63,34 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             if (result.gameObject != gameObject && result.gameObject.GetComponent<Image>() != null)
             {
                 Debug.Log("Imagen detectada debajo: " + result.gameObject.name);
-                // Aquí puedes realizar la lógica que desees cuando detectes una imagen debajo
+
+                // Intentamos obtener el componente ConNum directamente
+                ConNum conNum = result.gameObject.GetComponent<ConNum>();
+
+                // Si no se encuentra en el objeto, intentamos buscar en los padres
+                if (conNum == null)
+                {
+                    conNum = result.gameObject.GetComponentInParent<ConNum>();
+                }
+
+                // Si no se encuentra en los padres, intentamos buscar en los hijos
+                if (conNum == null)
+                {
+                    conNum = result.gameObject.GetComponentInChildren<ConNum>();
+                }
+
+                // Verificamos si finalmente encontramos el componente ConNum
+                if (conNum != null)
+                {
+                    int valorNumerico = conNum.ObtenerNumeroSprite();
+                    Debug.Log("Valor numérico del sprite detectado: " + valorNumerico);
+                }
+                else
+                {
+                    Debug.Log("La imagen detectada no tiene un componente ConNum.");
+                }
             }
         }
     }
+
 }
