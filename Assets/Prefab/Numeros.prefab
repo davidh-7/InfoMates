@@ -91,6 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 1557538503937170305}
   parentDesMov: {fileID: 0}
+  PrefabNumero: {fileID: 8470942339652370796}
 --- !u!114 &6345980222945199925
 MonoBehaviour:
   m_ObjectHideFlags: 0
