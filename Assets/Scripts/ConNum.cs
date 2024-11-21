@@ -10,6 +10,12 @@ public class ConNum : MonoBehaviour
 
     void Start()
     {
+        AsignarNumeroAleatorio();
+    }
+
+    // Método para asignar un número aleatorio
+    public void AsignarNumeroAleatorio()
+    {
         // Obtiene el componente Image en lugar de SpriteRenderer
         Image img = GetComponent<Image>();
         if (img == null)
@@ -27,14 +33,11 @@ public class ConNum : MonoBehaviour
 
         // Ajusta el valor de NumSprite para que represente el número visual en pantalla (1 a 9 en vez de 0 a 8)
         NumSprite += 1;
-
     }
 
     // Método para obtener el valor numérico del sprite actual
     public int ObtenerNumeroSprite()
     {
         return NumSprite;
-
     }
-
 }

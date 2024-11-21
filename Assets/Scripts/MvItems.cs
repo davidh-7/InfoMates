@@ -12,9 +12,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
-    public GameObject PrefabNumero; // Agrega el prefab del número aquí
-
-    private Image[] casillas;
+    public GameObject PrefabNumero; // Prefab del número
 
     // Variable estática para almacenar la suma total compartida entre todas las instancias de MvItems
     private static int sumaTotal = 0;
@@ -24,12 +22,6 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         // Obtenemos el GraphicRaycaster y el EventSystem
         raycaster = GetComponentInParent<GraphicRaycaster>();
         eventSystem = EventSystem.current;
-    }
-
-    void Update()
-    {
-        // Llamar a BuscarHijos en cada frame
-        BuscarHijos();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -73,11 +65,11 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             textSuma.GetComponent<TMPro.TextMeshProUGUI>().text = sumaTotal.ToString();
 
             // Eliminar ambos objetos
-            Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
             Destroy(gameObject); // Elimina el objeto actual
+            Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
 
-            // Llamar al método para buscar los hijos
-            BuscarHijos();
+            // Crear un nuevo número en el slot del número eliminado
+            InstanciarNuevoNumero(parentDesMov);
         }
         else
         {
@@ -118,55 +110,49 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         return null; // Retorna null si no se encuentra ningún otro número
     }
 
-    // Metodo para buscar los slots y si tiene hijos
-    void BuscarHijos()
+    private void InstanciarNuevoNumero(Transform parentSlot)
     {
-        // Encontrar todos los objetos con el tag "Slot"
-        GameObject[] objetosConTag = GameObject.FindGameObjectsWithTag("Slot");
-
-        // Crear un array para almacenar solo los componentes Image
-        casillas = new Image[objetosConTag.Length];
-
-        // Rellenar el array con los componentes Image de cada objeto
-        for (int i = 0; i < objetosConTag.Length; i++)
+        // Verificar que el prefab y el slot padre no sean nulos
+        if (PrefabNumero == null)
         {
-            casillas[i] = objetosConTag[i].GetComponent<Image>();
-
-            if (casillas[i] == null)
-            {
-                Debug.LogWarning("El objeto " + objetosConTag[i].name + " no tiene un componente Image.");
-            }
-            else
-            {
-                // Verificar si el objeto tiene hijos
-                int numeroHijos = objetosConTag[i].transform.childCount;
-
-                if (numeroHijos > 0)
-                {
-                    Debug.Log("El objeto " + objetosConTag[i].name + " tiene " + numeroHijos + " hijo(s).");
-                }
-                else
-                {
-                    Debug.Log("El objeto " + objetosConTag[i].name + " no tiene hijos.");
-
-                    // Instanciar el PrefabNumero como hijo del slot actual
-                    GameObject nuevoNumero = Instantiate(PrefabNumero, objetosConTag[i].transform);
-
-                    // Configurar la posición local para centrarlo en el slot
-                    nuevoNumero.transform.localPosition = Vector3.zero;
-
-                    // Asegurarse de que el prefab tenga el script ConNum y que este se inicialice correctamente
-                    ConNum conNum = nuevoNumero.GetComponent<ConNum>();
-                    if (conNum != null)
-                    {
-                        Debug.Log("Número creado y configurado en el slot: " + objetosConTag[i].name);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("El PrefabNumero no tiene un componente ConNum.");
-                    }
-                }
-            }
+            Debug.LogError("El prefab 'PrefabNumero' no está asignado en el inspector.");
+            return;
         }
+
+        if (parentSlot == null)
+        {
+            Debug.LogError("El slot padre (parentSlot) es nulo. No se puede instanciar un nuevo número.");
+            return;
+        }
+
+        // Instanciar el prefab en la escena
+        GameObject nuevoNumero = Instantiate(PrefabNumero, parentSlot);
+
+        // Asegurar que el prefab tenga la escala correcta y esté centrado en el slot
+        nuevoNumero.transform.localScale = Vector3.one;
+        nuevoNumero.transform.localPosition = Vector3.zero;
+
+        // Asegurarse de que el prefab y todos sus componentes estén habilitados
+        nuevoNumero.SetActive(true); // Asegurar que el GameObject está activo
+        foreach (var component in nuevoNumero.GetComponentsInChildren<Behaviour>()) // Incluye todos los componentes Behaviour (scripts, Image, etc.)
+        {
+            component.enabled = true; // Habilitar cada componente
+        }
+
+        // Verificar que el prefab tiene los scripts necesarios
+        MvItems mvItems = nuevoNumero.GetComponent<MvItems>();
+        ConNum conNum = nuevoNumero.GetComponent<ConNum>();
+
+        if (mvItems == null || conNum == null)
+        {
+            Debug.LogError("El prefab 'Numeros' debe tener los scripts 'MvItems' y 'ConNum'.");
+            return;
+        }
+
+        // Asegurarse de que el script ConNum asigne un número aleatorio correctamente
+        conNum.AsignarNumeroAleatorio();
+
+        // Log de confirmación
+        Debug.Log("Nuevo número instanciado correctamente en el slot: " + parentSlot.name);
     }
 }
