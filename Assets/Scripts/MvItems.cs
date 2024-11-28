@@ -8,7 +8,7 @@ using TMPro;
 public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     public Image image;
-    [HideInInspector] public Transform parentDesMov;
+    [HideInInspector] public Transform slotPrimerNum; // Slot original del número arrastrado
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
@@ -26,93 +26,134 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("Begin Drag");
-        parentDesMov = transform.parent;
+        Debug.Log("Begin Drag - Empezando el arrastre");
+
+        slotPrimerNum = transform.parent; // Guardar el slot original
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
+
+        // Desactivar raycasts en este objeto mientras se arrastra
         image.raycastTarget = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log("Mover");
         transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("Soltar");
+        // Detectar el slot debajo del número arrastrado
+        Transform slotDebajo = DetectarSlotDebajo();
 
-        // Detectar si hay otro número en el slot donde soltamos
-        ConNum otroNumero = DetectarNumeroDebajo();
-
-        if (otroNumero != null)
+        if (slotDebajo != null && slotDebajo != slotPrimerNum)
         {
-            // Obtener el valor numérico del objeto actual y el otro número detectado
-            ConNum miNumero = GetComponent<ConNum>();
-            int valorMiNumero = miNumero.ObtenerNumeroSprite();
-            int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
+            Debug.Log($"Slot detectado debajo: {slotDebajo.name}");
 
-            // Sumar ambos valores
-            int suma = valorMiNumero + valorOtroNumero;
+            // Buscar el número dentro del slot detectado
+            ConNum otroNumero = slotDebajo.GetComponentInChildren<ConNum>();
 
-            // Acumular la suma en la variable estática sumaTotal
-            sumaTotal += suma;
+            if (otroNumero != null)
+            {
+                Debug.Log($"Número detectado dentro del slot: {otroNumero.gameObject.name}");
 
-            // Mostrar la suma acumulada en TxtResultado
-            Debug.Log("Suma acumulada:" + sumaTotal.ToString());
-            GameObject textSuma = GameObject.Find("TxtResultado");
-            textSuma.GetComponent<TMPro.TextMeshProUGUI>().text = sumaTotal.ToString();
+                // Obtener el valor del número arrastrado y el número detectado
+                ConNum miNumero = GetComponent<ConNum>();
+                int valorMiNumero = miNumero.ObtenerNumeroSprite();
+                int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
 
-            // Eliminar ambos objetos
-            Destroy(gameObject); // Elimina el objeto actual
-            Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
+                // Realizar la suma
+                int suma = valorMiNumero + valorOtroNumero;
+                Debug.Log($"Sumando los valores: {valorMiNumero} + {valorOtroNumero} = {suma}");
 
-            // Crear un nuevo número en el slot del número eliminado
-            InstanciarNuevoNumero(parentDesMov);
+                // Acumular la suma total
+                sumaTotal += suma;
+
+                // Actualizar el texto del resultado
+                Debug.Log("Suma acumulada: " + sumaTotal.ToString());
+                GameObject textSuma = GameObject.Find("TxtResultado");
+                textSuma.GetComponent<TextMeshProUGUI>().text = sumaTotal.ToString();
+
+                // Eliminar ambos números
+                Debug.Log("Eliminando los números combinados...");
+                Destroy(gameObject); // Eliminar el número arrastrado
+                Destroy(otroNumero.gameObject); // Eliminar el número detectado
+
+                // Confirmar que los slots son distintos
+                Debug.Log($"Slot 1: {slotPrimerNum.name}, Slot 2: {slotDebajo.name}");
+
+                // Generar nuevos números en los slots afectados
+                StartCoroutine(GenerarNumerosConRetraso(slotPrimerNum, slotDebajo));
+            }
+            else
+            {
+                Debug.Log("El slot detectado no contiene un número.");
+                // Volver al slot original si el slot detectado está vacío
+                transform.SetParent(slotPrimerNum);
+                transform.localPosition = Vector3.zero;
+            }
         }
         else
         {
-            // Volver al padre original si no hay otro número
-            transform.SetParent(parentDesMov);
+            Debug.Log("No se detectó un slot válido debajo o es el mismo slot original.");
+            // Volver al slot original si no hay un slot válido debajo
+            transform.SetParent(slotPrimerNum);
+            transform.localPosition = Vector3.zero;
         }
 
+        // Reactivar raycasts después de finalizar el arrastre
         image.raycastTarget = true;
     }
 
-    private ConNum DetectarNumeroDebajo()
+    private Transform DetectarSlotDebajo()
     {
-        // Creamos el PointerEventData
+        // Crear el PointerEventData para el raycast
         pointerEventData = new PointerEventData(eventSystem);
         pointerEventData.position = Input.mousePosition;
 
         // Lista para almacenar los resultados del Raycast
         List<RaycastResult> results = new List<RaycastResult>();
 
-        // Realizamos el Raycast
+        // Desactivar raycasts en el objeto actual para evitar colisiones consigo mismo
+        image.raycastTarget = false;
+
+        // Realizar el Raycast
         raycaster.Raycast(pointerEventData, results);
 
-        // Verificamos los resultados
+        // Reactivar raycasts en el objeto actual
+        image.raycastTarget = true;
+
+        Debug.Log("Resultados del Raycast (Detección de Slots):");
         foreach (RaycastResult result in results)
         {
-            // Si el resultado es una imagen y no es el objeto actual que estamos arrastrando
-            if (result.gameObject != gameObject)
+            Debug.Log($"Resultado detectado: {result.gameObject.name}");
+
+            // Verificar si el objeto detectado es un slot
+            if (result.gameObject.name.StartsWith("Slot")) // Cambia según el nombre de tus slots
             {
-                // Intentamos obtener el componente ConNum del objeto debajo
-                ConNum conNum = result.gameObject.GetComponent<ConNum>();
-                if (conNum != null)
-                {
-                    return conNum; // Retornamos el otro número si lo encontramos
-                }
+                return result.gameObject.transform; // Retornar el slot detectado
             }
         }
 
-        return null; // Retorna null si no se encuentra ningún otro número
+        Debug.Log("No se detectó ningún slot válido debajo.");
+        return null; // Retornar null si no se detecta un slot válido
+    }
+
+    private IEnumerator GenerarNumerosConRetraso(Transform slot1, Transform slot2)
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        // Instanciar nuevo número en el primer slot
+        Debug.Log($"Instanciando número en el primer slot: {slot1.name}");
+        InstanciarNuevoNumero(slot1);
+
+        // Instanciar nuevo número en el segundo slot
+        Debug.Log($"Instanciando número en el segundo slot: {slot2.name}");
+        InstanciarNuevoNumero(slot2);
     }
 
     private void InstanciarNuevoNumero(Transform parentSlot)
     {
-        // Verificar que el prefab y el slot padre no sean nulos
         if (PrefabNumero == null)
         {
             Debug.LogError("El prefab 'PrefabNumero' no está asignado en el inspector.");
@@ -125,34 +166,35 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             return;
         }
 
-        // Instanciar el prefab en la escena
         GameObject nuevoNumero = Instantiate(PrefabNumero, parentSlot);
+        Debug.Log("Nuevo número instanciado en el slot: " + parentSlot.name);
 
-        // Asegurar que el prefab tenga la escala correcta y esté centrado en el slot
         nuevoNumero.transform.localScale = Vector3.one;
-        nuevoNumero.transform.localPosition = Vector3.zero;
+        nuevoNumero.transform.localPosition = Vector3.zero; // Forzar la posición local a (0, 0, 0)
 
-        // Asegurarse de que el prefab y todos sus componentes estén habilitados
-        nuevoNumero.SetActive(true); // Asegurar que el GameObject está activo
-        foreach (var component in nuevoNumero.GetComponentsInChildren<Behaviour>()) // Incluye todos los componentes Behaviour (scripts, Image, etc.)
+        nuevoNumero.SetActive(true);
+        foreach (var component in nuevoNumero.GetComponentsInChildren<Behaviour>())
         {
-            component.enabled = true; // Habilitar cada componente
+            component.enabled = true;
         }
 
-        // Verificar que el prefab tiene los scripts necesarios
+        Image imageComponent = nuevoNumero.GetComponent<Image>();
+        if (imageComponent != null)
+        {
+            imageComponent.enabled = true;
+            imageComponent.raycastTarget = true;
+        }
+
         MvItems mvItems = nuevoNumero.GetComponent<MvItems>();
-        ConNum conNum = nuevoNumero.GetComponent<ConNum>();
+        if (mvItems != null) mvItems.enabled = true;
 
-        if (mvItems == null || conNum == null)
+        ConNum conNum = nuevoNumero.GetComponent<ConNum>();
+        if (conNum != null)
         {
-            Debug.LogError("El prefab 'Numeros' debe tener los scripts 'MvItems' y 'ConNum'.");
-            return;
+            conNum.enabled = true;
+            conNum.AsignarNumeroAleatorio();
         }
 
-        // Asegurarse de que el script ConNum asigne un número aleatorio correctamente
-        conNum.AsignarNumeroAleatorio();
-
-        // Log de confirmación
         Debug.Log("Nuevo número instanciado correctamente en el slot: " + parentSlot.name);
     }
 }

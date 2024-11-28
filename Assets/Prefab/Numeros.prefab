@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6345980222945199925}
   m_Layer: 0
   m_Name: Numeros
-  m_TagString: Untagged
+  m_TagString: Numero
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 1557538503937170305}
-  parentDesMov: {fileID: 0}
+  slotPrimerNum: {fileID: 0}
   PrefabNumero: {fileID: 8470942339652370796}
 --- !u!114 &6345980222945199925
 MonoBehaviour:

@@ -11,7 +11,7 @@ public class MvEnItems : MonoBehaviour, IDropHandler
     {
         GameObject dropped = eventData.pointerDrag;
         MvItems mvItems = dropped.GetComponent<MvItems>();
-        mvItems.parentDesMov = transform;
+        mvItems.slotPrimerNum = transform;
 
     }
 }
