@@ -17,6 +17,9 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     private TextMeshProUGUI simboloText;
     private OperacionMatematica operacionMatematica;
 
+    // Referencia al controlador de la papelera
+    private ConPapelera conPapelera;
+
     // Variable estática para almacenar el resultado total compartido entre todas las instancias de MvItems
     private static int resultadoTotal = 0;
 
@@ -42,6 +45,13 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         {
             Debug.LogError("No se pudo encontrar el script 'OperacionMatematica' en la escena.");
         }
+
+        // Buscar automáticamente el controlador de la papelera
+        conPapelera = GameObject.FindObjectOfType<ConPapelera>();
+        if (conPapelera == null)
+        {
+            Debug.LogError("No se pudo encontrar el script 'ConPapelera' en la escena.");
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -50,7 +60,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         parentDesMov = transform.parent;
         transform.SetParent(transform.root);
         transform.SetAsLastSibling();
-        image.raycastTarget = false;
+        image.raycastTarget = false;  // Desactivamos raycast para que no interfiera mientras arrastramos
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -67,80 +77,106 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         GameObject objetoDebajo = DetectarObjetoDebajo();
         if (objetoDebajo != null && objetoDebajo.CompareTag("Papelera"))
         {
-            Debug.Log("Número soltado en la papelera. Se eliminará.");
-            Destroy(gameObject);
-            return; // Finaliza la operación aquí si el objeto fue destruido
-        }
-
-        // Detectar si hay otro número en el slot donde soltamos
-        ConNum otroNumero = DetectarNumeroDebajo();
-
-        if (otroNumero != null)
-        {
-            // Obtener el valor numérico del objeto actual y el otro número detectado
-            ConNum miNumero = GetComponent<ConNum>();
-            int valorMiNumero = miNumero.ObtenerNumeroSprite();
-            int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
-
-            // Verificar si se ha asignado la referencia del símbolo matemático
-            if (simboloText == null || operacionMatematica == null)
+            Debug.Log("Número soltado en la papelera.");
+            // Intentar usar la papelera
+            if (conPapelera != null && conPapelera.UsarPapelera())
             {
-                Debug.LogError("No se asignó correctamente alguna referencia necesaria.");
-                return;
+                Debug.Log("Número eliminado mediante la papelera.");
+                Destroy(gameObject);
+                return; // Finaliza la operación si el objeto fue destruido
             }
-
-            // Realizar la operación dependiendo del símbolo matemático
-            string simbolo = simboloText.text;
-            int resultado = 0;
-
-            switch (simbolo)
+            else
             {
-                case "+":
-                    resultado = valorMiNumero + valorOtroNumero;
-                    break;
-
-                case "-":
-                    // Asegurar que siempre restemos el mayor menos el menor para evitar resultados negativos
-                    resultado = Mathf.Abs(valorMiNumero - valorOtroNumero);
-                    break;
-
-                case "*":
-                    resultado = valorMiNumero * valorOtroNumero;
-                    break;
-
-                default:
-                    Debug.LogError("Símbolo matemático no soportado: " + simbolo);
-                    return;
+                // No hay usos disponibles, volver al padre original
+                Debug.Log("No se pudo eliminar el número porque la papelera no tiene más usos. Volviendo al slot original.");
+                VolverAlPadreOriginal();
             }
-
-            // Acumular el resultado en la variable estática resultadoTotal
-            resultadoTotal += resultado;
-
-            // Mostrar el resultado acumulado en TxtResultado
-            Debug.Log("Resultado acumulado: " + resultadoTotal.ToString());
-            GameObject textResultado = GameObject.Find("TxtResultado");
-            textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
-
-            // Verificar si el resultado acumulado coincide con el resultado deseado
-            if (resultadoTotal == operacionMatematica.ObtenerResultadoDeseado())
-            {
-                Debug.Log("¡Operación exitosa! Se alcanzó el resultado deseado.");
-                // Generar una nueva operación
-                operacionMatematica.GenerarOperacionAleatoria();
-                // Reiniciar el resultado acumulado para la siguiente operación
-                resultadoTotal = 0;
-            }
-
-            // Eliminar ambos objetos
-            Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
-            Destroy(gameObject); // Elimina el objeto actual
         }
         else
         {
-            // Volver al padre original si no hay otro número
-            transform.SetParent(parentDesMov);
+            // Detectar si hay otro número en el slot donde soltamos
+            ConNum otroNumero = DetectarNumeroDebajo();
+
+            if (otroNumero != null)
+            {
+                // Obtener el valor numérico del objeto actual y el otro número detectado
+                ConNum miNumero = GetComponent<ConNum>();
+                int valorMiNumero = miNumero.ObtenerNumeroSprite();
+                int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
+
+                // Verificar si se ha asignado la referencia del símbolo matemático
+                if (simboloText == null || operacionMatematica == null)
+                {
+                    Debug.LogError("No se asignó correctamente alguna referencia necesaria.");
+                    image.raycastTarget = true;  // Asegurarnos de volver a activar raycastTarget
+                    return;
+                }
+
+                // Realizar la operación dependiendo del símbolo matemático
+                string simbolo = simboloText.text;
+                int resultado = 0;
+
+                switch (simbolo)
+                {
+                    case "+":
+                        resultado = valorMiNumero + valorOtroNumero;
+                        break;
+
+                    case "-":
+                        // Asegurar que siempre restemos el mayor menos el menor para evitar resultados negativos
+                        resultado = Mathf.Abs(valorMiNumero - valorOtroNumero);
+                        break;
+
+                    case "*":
+                        resultado = valorMiNumero * valorOtroNumero;
+                        break;
+
+                    default:
+                        Debug.LogError("Símbolo matemático no soportado: " + simbolo);
+                        image.raycastTarget = true;  // Asegurarnos de volver a activar raycastTarget
+                        return;
+                }
+
+                // Acumular el resultado en la variable estática resultadoTotal
+                resultadoTotal += resultado;
+
+                // Mostrar el resultado acumulado en TxtResultado
+                Debug.Log("Resultado acumulado: " + resultadoTotal.ToString());
+                GameObject textResultado = GameObject.Find("TxtResultado");
+                textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
+
+                // Verificar si el resultado acumulado coincide con el resultado deseado
+                if (resultadoTotal == operacionMatematica.ObtenerResultadoDeseado())
+                {
+                    Debug.Log("¡Operación exitosa! Se alcanzó el resultado deseado.");
+                    // Generar una nueva operación
+                    operacionMatematica.GenerarOperacionAleatoria();
+                    // Reiniciar el resultado acumulado para la siguiente operación
+                    resultadoTotal = 0;
+                }
+
+                // Eliminar ambos objetos
+                Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
+                Destroy(gameObject); // Elimina el objeto actual
+            }
+            else
+            {
+                // Volver al padre original si no hay otro número
+                VolverAlPadreOriginal();
+            }
         }
 
+        // Reactivar el raycastTarget del componente de Image para asegurar que se pueda volver a interactuar
+        image.raycastTarget = true;
+    }
+
+    private void VolverAlPadreOriginal()
+    {
+        // Método para volver al slot original
+        transform.SetParent(parentDesMov);
+        transform.position = parentDesMov.position;
+
+        // Reactivar raycastTarget para poder interactuar con el objeto de nuevo
         image.raycastTarget = true;
     }
 
