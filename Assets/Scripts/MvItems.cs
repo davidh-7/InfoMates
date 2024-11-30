@@ -63,6 +63,15 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     {
         Debug.Log("Soltar");
 
+        // Detectar si el objeto se soltó sobre la papelera
+        GameObject objetoDebajo = DetectarObjetoDebajo();
+        if (objetoDebajo != null && objetoDebajo.CompareTag("Papelera"))
+        {
+            Debug.Log("Número soltado en la papelera. Se eliminará.");
+            Destroy(gameObject);
+            return; // Finaliza la operación aquí si el objeto fue destruido
+        }
+
         // Detectar si hay otro número en el slot donde soltamos
         ConNum otroNumero = DetectarNumeroDebajo();
 
@@ -163,5 +172,30 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
         }
 
         return null; // Retorna null si no se encuentra ningún otro número
+    }
+
+    private GameObject DetectarObjetoDebajo()
+    {
+        // Creamos el PointerEventData
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = Input.mousePosition;
+
+        // Lista para almacenar los resultados del Raycast
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        // Realizamos el Raycast
+        raycaster.Raycast(pointerEventData, results);
+
+        // Verificamos los resultados
+        foreach (RaycastResult result in results)
+        {
+            // Retornamos el primer objeto debajo que no sea el mismo que estamos arrastrando
+            if (result.gameObject != gameObject)
+            {
+                return result.gameObject;
+            }
+        }
+
+        return null; // Retorna null si no se encuentra ningún objeto debajo
     }
 }
