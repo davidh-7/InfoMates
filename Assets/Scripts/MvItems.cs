@@ -13,14 +13,35 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
 
-    // Variable estática para almacenar la suma total compartida entre todas las instancias de MvItems
-    private static int sumaTotal = 0;
+    // Referencia al campo de texto que muestra el símbolo matemático
+    private TextMeshProUGUI simboloText;
+    private OperacionMatematica operacionMatematica;
+
+    // Variable estática para almacenar el resultado total compartido entre todas las instancias de MvItems
+    private static int resultadoTotal = 0;
 
     void Start()
     {
         // Obtenemos el GraphicRaycaster y el EventSystem
         raycaster = GetComponentInParent<GraphicRaycaster>();
         eventSystem = EventSystem.current;
+
+        // Buscar automáticamente el TextField llamado "Simbolo" en la escena
+        if (simboloText == null)
+        {
+            simboloText = GameObject.Find("Simbolo").GetComponent<TextMeshProUGUI>();
+            if (simboloText == null)
+            {
+                Debug.LogError("No se pudo encontrar el campo de texto 'Simbolo' en la escena.");
+            }
+        }
+
+        // Buscar automáticamente el script OperacionMatematica
+        operacionMatematica = GameObject.FindObjectOfType<OperacionMatematica>();
+        if (operacionMatematica == null)
+        {
+            Debug.LogError("No se pudo encontrar el script 'OperacionMatematica' en la escena.");
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -52,16 +73,54 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             int valorMiNumero = miNumero.ObtenerNumeroSprite();
             int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
 
-            // Sumar ambos valores
-            int suma = valorMiNumero + valorOtroNumero;
+            // Verificar si se ha asignado la referencia del símbolo matemático
+            if (simboloText == null || operacionMatematica == null)
+            {
+                Debug.LogError("No se asignó correctamente alguna referencia necesaria.");
+                return;
+            }
 
-            // Acumular la suma en la variable estática sumaTotal
-            sumaTotal += suma;
+            // Realizar la operación dependiendo del símbolo matemático
+            string simbolo = simboloText.text;
+            int resultado = 0;
 
-            // Mostrar la suma acumulada en TxtResultado
-            Debug.Log("Suma acumulada:" + sumaTotal.ToString());
-            GameObject textSuma = GameObject.Find("TxtResultado");
-            textSuma.GetComponent<TMPro.TextMeshProUGUI>().text = sumaTotal.ToString();
+            switch (simbolo)
+            {
+                case "+":
+                    resultado = valorMiNumero + valorOtroNumero;
+                    break;
+
+                case "-":
+                    // Asegurar que siempre restemos el mayor menos el menor para evitar resultados negativos
+                    resultado = Mathf.Abs(valorMiNumero - valorOtroNumero);
+                    break;
+
+                case "*":
+                    resultado = valorMiNumero * valorOtroNumero;
+                    break;
+
+                default:
+                    Debug.LogError("Símbolo matemático no soportado: " + simbolo);
+                    return;
+            }
+
+            // Acumular el resultado en la variable estática resultadoTotal
+            resultadoTotal += resultado;
+
+            // Mostrar el resultado acumulado en TxtResultado
+            Debug.Log("Resultado acumulado: " + resultadoTotal.ToString());
+            GameObject textResultado = GameObject.Find("TxtResultado");
+            textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
+
+            // Verificar si el resultado acumulado coincide con el resultado deseado
+            if (resultadoTotal == operacionMatematica.ObtenerResultadoDeseado())
+            {
+                Debug.Log("¡Operación exitosa! Se alcanzó el resultado deseado.");
+                // Generar una nueva operación
+                operacionMatematica.GenerarOperacionAleatoria();
+                // Reiniciar el resultado acumulado para la siguiente operación
+                resultadoTotal = 0;
+            }
 
             // Eliminar ambos objetos
             Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
