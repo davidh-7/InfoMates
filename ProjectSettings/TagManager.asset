@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DragParent
   - Slot
+  - Event
   layers:
   - Default
   - TransparentFX
