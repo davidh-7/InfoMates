@@ -25,7 +25,7 @@ public class OperacionMatematica : MonoBehaviour
             case 0: // Suma
                 simboloMatematico = "+";
                 // Generar un resultado deseado razonable que pueda alcanzarse sumando números entre 1 y 9
-                resultadoDeseado = Random.Range(5, 50);  // Ajustar el rango según la dificultad deseada
+                resultadoDeseado = Random.Range(5, 100);  // Ajustar el rango según la dificultad deseada
                 break;
 
             case 1: // Resta
