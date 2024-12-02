@@ -29,6 +29,10 @@ public class ConBotones : MonoBehaviour
     {
         SceneManager.LoadScene("ScenaNivel");
     }
-   
+    public void BotonTienda()
+    {
+        SceneManager.LoadScene("EscenaTienda");
+    }
+
 }
 
