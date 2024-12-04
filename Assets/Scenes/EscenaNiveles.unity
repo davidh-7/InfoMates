@@ -892,7 +892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 757, y: 154}
+  m_AnchoredPosition: {x: 757, y: 349}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &407878600
@@ -1173,7 +1173,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 754, y: -84}
+  m_AnchoredPosition: {x: 754, y: 111}
   m_SizeDelta: {x: 200, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &471802175
@@ -1220,7 +1220,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 980576914}
+      - m_Target: {fileID: 980576916}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
         m_MethodName: BotonHistoria
         m_Mode: 1
@@ -1755,7 +1755,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 980576914}
+      - m_Target: {fileID: 980576916}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
         m_MethodName: BotonExit
         m_Mode: 1
@@ -2085,8 +2085,8 @@ GameObject:
   - component: {fileID: 980576912}
   - component: {fileID: 980576911}
   - component: {fileID: 980576910}
-  - component: {fileID: 980576914}
   - component: {fileID: 980576915}
+  - component: {fileID: 980576916}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2190,18 +2190,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &980576914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 980576909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d021859cd40ac94fb12b6f03c417155, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &980576915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2216,6 +2204,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   botonHistoria: {fileID: 0}
   botonInstrucciones: {fileID: 0}
+--- !u!114 &980576916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 980576909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d021859cd40ac94fb12b6f03c417155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1002669945
 GameObject:
   m_ObjectHideFlags: 0
@@ -2421,7 +2421,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 980576914}
+      - m_Target: {fileID: 980576916}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
         m_MethodName: BotonNv1
         m_Mode: 1
@@ -3346,7 +3346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 754, y: 6}
+  m_AnchoredPosition: {x: 754, y: 201}
   m_SizeDelta: {x: 200, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1605556655
@@ -3393,7 +3393,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 980576914}
+      - m_Target: {fileID: 980576916}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
         m_MethodName: BotonInstrucciones
         m_Mode: 1
@@ -4048,7 +4048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 749, y: 352}
+  m_AnchoredPosition: {x: 758, y: -306}
   m_SizeDelta: {x: 180, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1891058989
@@ -4095,7 +4095,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 980576914}
+      - m_Target: {fileID: 980576916}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
         m_MethodName: BotonTienda
         m_Mode: 1

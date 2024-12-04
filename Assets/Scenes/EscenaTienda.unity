@@ -459,11 +459,11 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_StartCorner: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 1
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 0}
+  m_Spacing: {x: 20, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &1424035408
@@ -615,7 +615,7 @@ MonoBehaviour:
     precio: 600
     imagen: {fileID: 21300000, guid: 1ee81f23a4a95ac4fbcb0db0865f345a, type: 3}
   prefabProductoUI: {fileID: 7979197089970720121, guid: c275e78bcd203f148862d2c30654348b, type: 3}
-  prefabProductoInventario: {fileID: 3990144399017213656, guid: 2ea189db153de1d48aaa09381c6c1e16, type: 3}
+  prefabProductoInventario: {fileID: 5773786561208953719, guid: 2ea189db153de1d48aaa09381c6c1e16, type: 3}
   contenedorProductos: {fileID: 1424035409}
   contenedorInventario: {fileID: 1376033701}
   inventario: []

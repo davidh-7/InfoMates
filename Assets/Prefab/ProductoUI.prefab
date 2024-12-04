@@ -499,6 +499,7 @@ MonoBehaviour:
   imagenProducto: {fileID: 8915853818993017792}
   botonCompra: {fileID: 8679363827060597667}
   botonAgregarQuitar: {fileID: 5738146904718954917}
+  cantidadInventarioTexto: {fileID: 0}
 --- !u!61 &7664198208671048247
 BoxCollider2D:
   m_ObjectHideFlags: 0

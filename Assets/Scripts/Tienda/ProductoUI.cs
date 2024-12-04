@@ -12,6 +12,7 @@ public class ProductoUI : MonoBehaviour
 
     private Producto producto;        // Referencia al producto
     private TiendaManager tiendaManager; // Referencia al manager de la tienda
+ 
 
     // Este método configura los elementos de la UI con los datos del producto
     public void ConfigurarProducto(Producto producto, TiendaManager tienda)
@@ -32,6 +33,7 @@ public class ProductoUI : MonoBehaviour
         botonAgregarQuitar.onClick.RemoveAllListeners();
         botonAgregarQuitar.onClick.AddListener(() => AgregarOQuitarDelInventario());
     }
+
 
     // Método que se llama cuando el jugador hace clic en el botón de compra
     void ComprarProducto()

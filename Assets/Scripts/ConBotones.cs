@@ -12,7 +12,6 @@ public class ConBotones : MonoBehaviour
         SceneManager.LoadScene("EscenaInicio");
     }
     //Inicio
-
     public void BotonJuego() {
         SceneManager.LoadScene("EscenaNiveles");
     }
@@ -24,6 +23,7 @@ public class ConBotones : MonoBehaviour
     {
         SceneManager.LoadScene("EscenaInstrucciones");
     }
+
     //Niveles
     public void BotonNv1()
     {

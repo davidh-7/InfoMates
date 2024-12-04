@@ -10,6 +10,9 @@ public class TiendaManager : MonoBehaviour
     public Transform contenedorProductos; // Contenedor donde se instanciarán los productos de la tienda
     public Transform contenedorInventario; // Contenedor donde se instanciarán los productos del inventario
     public List<Producto> inventario = new List<Producto>(); // Inventario del jugador
+    private Dictionary<Producto, GameObject> visualInventario = new Dictionary<Producto, GameObject>();
+    private Dictionary<Producto, int> contadorInventario = new Dictionary<Producto, int>();
+
 
     void Start()
     {
@@ -33,24 +36,27 @@ public class TiendaManager : MonoBehaviour
     // Método que agrega el producto al inventario
     public void AgregarProductoAlInventario(Producto producto)
     {
-        if (inventario.Count < 3)  // Verificamos que el inventario no esté lleno
+        if (inventario.Count < 3) // Verificamos que el inventario no esté lleno
         {
             // Instanciamos el prefab en el contenedor del inventario
             GameObject productoInventario = Instantiate(prefabProductoInventario, contenedorInventario);
+            Debug.Log("Prefab instanciado: " + productoInventario.name);
 
-            // Verificamos si el prefab tiene un componente Image
-            Image img = productoInventario.GetComponent<Image>();
+            // Buscar el componente Image en el prefab o sus hijos
+            Image img = productoInventario.GetComponentInChildren<Image>();
             if (img != null)
             {
-                img.sprite = producto.imagen;  // Asignamos la imagen del producto
+                Debug.Log("Componente Image encontrado en el prefab o un hijo.");
+                img.sprite = producto.imagen; // Asignamos la imagen del producto
             }
             else
             {
                 Debug.LogError("El prefab ProductoInventario no tiene un componente Image.");
             }
 
-            // Añadimos el producto al inventario (si es necesario)
+            // Añadimos el producto al inventario y guardamos la referencia visual
             inventario.Add(producto);
+            visualInventario[producto] = productoInventario; // Asociamos el producto con su GameObject
         }
         else
         {
@@ -59,17 +65,32 @@ public class TiendaManager : MonoBehaviour
     }
 
 
+
+
+
     // Método para quitar un producto del inventario
     public void QuitarProductoDelInventario(Producto producto)
     {
         if (inventario.Contains(producto))
         {
             inventario.Remove(producto);
-            Debug.Log("Producto quitado del inventario: " + producto.nombre);
 
-            // Aquí, puedes implementar la lógica para eliminar la imagen en el inventario si lo deseas
+            // Buscar y destruir la instancia visual asociada al producto
+            if (visualInventario.ContainsKey(producto))
+            {
+                Destroy(visualInventario[producto]); // Destruir el GameObject
+                visualInventario.Remove(producto); // Eliminar la referencia del diccionario
+            }
+
+            Debug.Log("Producto quitado del inventario: " + producto.nombre);
+        }
+        else
+        {
+            Debug.LogWarning("El producto no está en el inventario.");
         }
     }
+
+
 
     // Método para comprobar si un producto ya está en el inventario
     public bool InventarioContieneProducto(Producto producto)
