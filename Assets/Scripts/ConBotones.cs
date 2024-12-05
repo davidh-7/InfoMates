@@ -34,5 +34,17 @@ public class ConBotones : MonoBehaviour
         SceneManager.LoadScene("EscenaTienda");
     }
 
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        // Para detener el juego en el editor de Unity
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // Para cerrar el juego en una compilación
+        Application.Quit();
+#endif
+    }
+
+
 }
 

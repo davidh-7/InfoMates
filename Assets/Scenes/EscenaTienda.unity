@@ -401,8 +401,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 532, y: -214}
-  m_SizeDelta: {x: -1367.5657, y: -535.05}
+  m_AnchoredPosition: {x: 616, y: -214}
+  m_SizeDelta: {x: -1742.4398, y: -535.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1376033702
 MonoBehaviour:
@@ -461,9 +461,9 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 4
   m_StartCorner: 1
-  m_StartAxis: 0
+  m_StartAxis: 1
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 20, y: 0}
+  m_Spacing: {x: 20, y: 20}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &1424035408
@@ -501,7 +501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -324, y: -214}
+  m_AnchoredPosition: {x: -97, y: -214}
   m_SizeDelta: {x: -931.99207, y: -535.0451}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1424035410
@@ -599,21 +599,27 @@ MonoBehaviour:
   - nombre: SHIELD
     precio: 300
     imagen: {fileID: 21300000, guid: ca2f3347a6db5c540ab7c2eb4e708e87, type: 3}
+    descripcion: vdfdfdg
   - nombre: "Mj\xF6nlir"
     precio: 250
     imagen: {fileID: 21300000, guid: 85fafaa3372d1184abab32ea2b9182aa, type: 3}
+    descripcion: Por decidir
   - nombre: Arrow
     precio: 150
     imagen: {fileID: 21300000, guid: 81ea4312bfff3df48bacb63c021c8940, type: 3}
+    descripcion: Por decidir
   - nombre: Runes
     precio: 350
     imagen: {fileID: 21300000, guid: 8b57f42b0f1a0ac4da66ff275e84b8c5, type: 3}
+    descripcion: Por decidir
   - nombre: Dark hand
     precio: 400
     imagen: {fileID: 21300000, guid: 14ba157006fa74e4785f71f5bcd262d4, type: 3}
+    descripcion: Por decidir
   - nombre: Scarlet
     precio: 600
     imagen: {fileID: 21300000, guid: 1ee81f23a4a95ac4fbcb0db0865f345a, type: 3}
+    descripcion: Por decidir
   prefabProductoUI: {fileID: 7979197089970720121, guid: c275e78bcd203f148862d2c30654348b, type: 3}
   prefabProductoInventario: {fileID: 5773786561208953719, guid: 2ea189db153de1d48aaa09381c6c1e16, type: 3}
   contenedorProductos: {fileID: 1424035409}

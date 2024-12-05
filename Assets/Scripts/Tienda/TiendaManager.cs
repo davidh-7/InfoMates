@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class TiendaManager : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class TiendaManager : MonoBehaviour
 
     // Método para agregar un producto al inventario
     // Método que agrega el producto al inventario
+
     public void AgregarProductoAlInventario(Producto producto)
     {
         if (inventario.Count < 3) // Verificamos que el inventario no esté lleno
@@ -46,25 +48,28 @@ public class TiendaManager : MonoBehaviour
             Image img = productoInventario.GetComponentInChildren<Image>();
             if (img != null)
             {
-                Debug.Log("Componente Image encontrado en el prefab o un hijo.");
+               
                 img.sprite = producto.imagen; // Asignamos la imagen del producto
-            }
-            else
-            {
-                Debug.LogError("El prefab ProductoInventario no tiene un componente Image.");
             }
 
             // Añadimos el producto al inventario y guardamos la referencia visual
             inventario.Add(producto);
             visualInventario[producto] = productoInventario; // Asociamos el producto con su GameObject
+
+            // Inicializamos la cantidad en 0 si no se ha comprado todavía
+            if (!contadorInventario.ContainsKey(producto))
+            {
+                contadorInventario[producto] = 0; // Inicializamos la cantidad en 0
+            }
+
+            // Actualizamos la cantidad visual en el inventario
+            ActualizarInventarioVisual(producto);
         }
         else
         {
             Debug.Log("El inventario está lleno.");
         }
     }
-
-
 
 
 
@@ -90,8 +95,6 @@ public class TiendaManager : MonoBehaviour
         }
     }
 
-
-
     // Método para comprobar si un producto ya está en el inventario
     public bool InventarioContieneProducto(Producto producto)
     {
@@ -101,6 +104,48 @@ public class TiendaManager : MonoBehaviour
     // Método para manejar la compra del producto
     public void ComprarProducto(Producto producto)
     {
+   
+        // Si el producto no está en el inventario, se agrega con la cantidad 1
+        if (!contadorInventario.ContainsKey(producto))
+        {
+            contadorInventario[producto] = 1; // Inicializamos en 1
+        }
+        else
+        {
+            contadorInventario[producto]++; // Incrementamos la cantidad
+        }
+
+        // Actualizamos la cantidad visual en el inventario
+        ActualizarInventarioVisual(producto);
+
         Debug.Log("Compraste el producto: " + producto.nombre);
     }
+
+
+    public int ObtenerCantidadProducto(Producto producto)
+    {
+        return contadorInventario.ContainsKey(producto) ? contadorInventario[producto] : 0;
+    }
+
+    // Este método actualiza la cantidad visual en el inventario
+    public void ActualizarInventarioVisual(Producto producto)
+    {
+        if (visualInventario.ContainsKey(producto))
+        {
+            // Aquí deberías encontrar el componente de texto (por ejemplo, TMP_Text)
+            // y actualizar la cantidad visualmente en el inventario
+            TMP_Text cantidadTexto = visualInventario[producto].GetComponentInChildren<TMP_Text>();
+            if (cantidadTexto != null)
+            {
+                cantidadTexto.text = "x" + contadorInventario[producto].ToString(); // Actualiza la cantidad
+            }
+            else
+            {
+                Debug.LogError("El prefab del inventario no tiene un componente TMP_Text para la cantidad.");
+            }
+        }
+     
+        
+    }
+
 }

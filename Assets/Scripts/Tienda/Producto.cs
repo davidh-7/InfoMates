@@ -1,9 +1,11 @@
 using UnityEngine;
 
-[System.Serializable] // Para que se pueda editar en el Inspector
+[System.Serializable]
 public class Producto
 {
-    public string nombre;       // Nombre del producto
-    public int precio;          // Precio del producto
-    public Sprite imagen;       // Imagen del producto
+    public string nombre;
+    public int precio;
+    public Sprite imagen;
+    [TextArea] // Esto permitirá escribir descripciones largas en el Inspector
+    public string descripcion;
 }
