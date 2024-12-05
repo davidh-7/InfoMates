@@ -12,7 +12,6 @@ public class ConBotones : MonoBehaviour
         SceneManager.LoadScene("EscenaInicio");
     }
     //Inicio
-
     public void BotonJuego() {
         SceneManager.LoadScene("EscenaNiveles");
     }
@@ -24,11 +23,28 @@ public class ConBotones : MonoBehaviour
     {
         SceneManager.LoadScene("EscenaInstrucciones");
     }
+
     //Niveles
     public void BotonNv1()
     {
         SceneManager.LoadScene("ScenaNivel");
     }
-   
+    public void BotonTienda()
+    {
+        SceneManager.LoadScene("EscenaTienda");
+    }
+
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        // Para detener el juego en el editor de Unity
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // Para cerrar el juego en una compilación
+        Application.Quit();
+#endif
+    }
+
+
 }
 
