@@ -3,7 +3,7 @@ using TMPro;
 
 public class ConPapelera : MonoBehaviour
 {
-    public int maxUsos = 1; // Número máximo de veces que se puede usar la papelera
+    public int maxUsos = 5; // Número máximo de veces que se puede usar la papelera
     private int usosRestantes;
     public TextMeshProUGUI textoUsosRestantes; // Campo de texto que muestra los usos restantes
 
@@ -35,7 +35,7 @@ public class ConPapelera : MonoBehaviour
     {
         if (textoUsosRestantes != null)
         {
-            textoUsosRestantes.text = "Usos restantes: " + usosRestantes;
+            textoUsosRestantes.text = "Usos restants: " + usosRestantes;
         }
     }
 }

@@ -26,7 +26,7 @@ public class ConNum : MonoBehaviour
         img.sprite = posiblesNumeros[NumSprite];
 
         // Ajusta el valor de NumSprite para que represente el número visual en pantalla (0 a 9)
-        NumSprite += 1;
+        NumSprite += 0;
     }
 
     // Método para obtener el valor numérico del sprite actual

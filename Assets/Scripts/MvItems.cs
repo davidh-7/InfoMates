@@ -83,36 +83,30 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
             {
                 Debug.Log("Número eliminado mediante la papelera.");
                 Destroy(gameObject);
-                return; // Finaliza la operación si el objeto fue destruido
+                return;
             }
             else
             {
-                // No hay usos disponibles, volver al padre original
                 Debug.Log("No se pudo eliminar el número porque la papelera no tiene más usos. Volviendo al slot original.");
                 VolverAlPadreOriginal();
             }
         }
         else
         {
-            // Detectar si hay otro número en el slot donde soltamos
             ConNum otroNumero = DetectarNumeroDebajo();
-
             if (otroNumero != null)
             {
-                // Obtener el valor numérico del objeto actual y el otro número detectado
                 ConNum miNumero = GetComponent<ConNum>();
                 int valorMiNumero = miNumero.ObtenerNumeroSprite();
                 int valorOtroNumero = otroNumero.ObtenerNumeroSprite();
 
-                // Verificar si se ha asignado la referencia del símbolo matemático
                 if (simboloText == null || operacionMatematica == null)
                 {
                     Debug.LogError("No se asignó correctamente alguna referencia necesaria.");
-                    image.raycastTarget = true;  // Asegurarnos de volver a activar raycastTarget
+                    image.raycastTarget = true;
                     return;
                 }
 
-                // Realizar la operación dependiendo del símbolo matemático
                 string simbolo = simboloText.text;
                 int resultado = 0;
 
@@ -123,7 +117,6 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                         break;
 
                     case "-":
-                        // Asegurar que siempre restemos el mayor menos el menor para evitar resultados negativos
                         resultado = Mathf.Abs(valorMiNumero - valorOtroNumero);
                         break;
 
@@ -133,40 +126,42 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
 
                     default:
                         Debug.LogError("Símbolo matemático no soportado: " + simbolo);
-                        image.raycastTarget = true;  // Asegurarnos de volver a activar raycastTarget
+                        image.raycastTarget = true;
                         return;
                 }
 
-                // Acumular el resultado en la variable estática resultadoTotal
                 resultadoTotal += resultado;
 
-                // Mostrar el resultado acumulado en TxtResultado
-                Debug.Log("Resultado acumulado: " + resultadoTotal.ToString());
+                Debug.Log("Resultado acumulado: " + resultadoTotal);
                 GameObject textResultado = GameObject.Find("TxtResultado");
                 textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
 
-                // Verificar si el resultado acumulado coincide con el resultado deseado
-                if (resultadoTotal == operacionMatematica.ObtenerResultadoDeseado())
+                //contrala las opereraciones y los vlaores
+
+                if (resultadoTotal > operacionMatematica.ObtenerResultadoDeseado())
                 {
-                    Debug.Log("¡Operación exitosa! Se alcanzó el resultado deseado.");
-                    // Generar una nueva operación
-                    operacionMatematica.GenerarOperacionAleatoria();
-                    // Reiniciar el resultado acumulado para la siguiente operación
+                    Debug.Log("¡Te has pasado del resultado deseado! Reiniciando operación.");
+
+                    // Reiniciar el resultado total
                     resultadoTotal = 0;
+
+                    // Actualizar el texto del resultado en pantalla
+                    textResultado = GameObject.Find("TxtResultado");
+                    if (textResultado != null)
+                    {
+                        textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
+                    }
                 }
 
-                // Eliminar ambos objetos
-                Destroy(otroNumero.gameObject); // Elimina el objeto con el otro número
-                Destroy(gameObject); // Elimina el objeto actual
+                Destroy(otroNumero.gameObject);
+                Destroy(gameObject);
             }
             else
             {
-                // Volver al padre original si no hay otro número
                 VolverAlPadreOriginal();
             }
         }
 
-        // Reactivar el raycastTarget del componente de Image para asegurar que se pueda volver a interactuar
         image.raycastTarget = true;
     }
 
