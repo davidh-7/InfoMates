@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 2779336618468415106}
   - component: {fileID: 7183599546139693296}
   - component: {fileID: 2525104114139321781}
-  - component: {fileID: 761698255635740929}
+  - component: {fileID: 5405438275289234529}
   m_Layer: 0
   m_Name: Slots
-  m_TagString: Untagged
+  m_TagString: Slot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
---- !u!114 &761698255635740929
+--- !u!114 &5405438275289234529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,6 +110,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5331167971364261232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aec455c82fe5244d85ec756beaa82e7, type: 3}
+  m_Script: {fileID: 11500000, guid: c0dca50e170b3714d8e306dff8bbd5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabNumero: {fileID: 8470942339652370796, guid: 632b251bb6620614282f5eccaf35b839, type: 3}
