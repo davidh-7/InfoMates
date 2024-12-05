@@ -136,7 +136,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                 GameObject textResultado = GameObject.Find("TxtResultado");
                 textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
 
-                //contrala las opereraciones y los vlaores
+                //contrala las opereraciones 
 
                 if (resultadoTotal > operacionMatematica.ObtenerResultadoDeseado())
                 {
@@ -146,12 +146,43 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                     resultadoTotal = 0;
 
                     // Actualizar el texto del resultado en pantalla
-                    textResultado = GameObject.Find("TxtResultado");
+                    GameObject textResultado = GameObject.Find("TxtResultado");
                     if (textResultado != null)
                     {
                         textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
                     }
+
+                    // Reiniciar la operación matemática y generar una nueva operación
+                    if (operacionMatematica != null)
+                    {
+                        operacionMatematica.GenerarOperacionAleatoria(); // Llama al método que genera una nueva operación
+                        Debug.Log("Nueva operación generada.");
+                    }
                 }
+                else if (resultadoTotal == operacionMatematica.ObtenerResultadoDeseado())
+                {
+                    // Si el resultado acumulado es igual al resultado deseado
+
+                    Debug.Log("¡Has alcanzado el resultado deseado! Generando nueva operación.");
+
+                    // Reiniciar el resultado total
+                    resultadoTotal = 0;
+
+                    // Actualizar el texto del resultado en pantalla
+                    GameObject textResultado = GameObject.Find("TxtResultado");
+                    if (textResultado != null)
+                    {
+                        textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
+                    }
+
+                    // Reiniciar la operación matemática y generar una nueva operación
+                    if (operacionMatematica != null)
+                    {
+                        operacionMatematica.GenerarOperacionAleatoria(); // Llama al método que genera una nueva operación
+                        Debug.Log("Nueva operación generada.");
+                    }
+                }
+
 
                 Destroy(otroNumero.gameObject);
                 Destroy(gameObject);
