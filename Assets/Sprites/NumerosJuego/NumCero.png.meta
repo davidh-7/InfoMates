@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Sprites/Botones/BotonInfo.png.meta
-guid: 5c5d367bf3422f54e9b277f2c55a46fa
-========
-guid: baddd7a8fefd8c84fbd669dcd39618ed
->>>>>>>> Prueba2:Assets/Sprites/NumerosJuego/NumCero.png.meta
+guid: 6ae3da909efd6bc49bbd9db57caf0631
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}

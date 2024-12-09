@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   posiblesNumeros:
-  - {fileID: 21300000, guid: baddd7a8fefd8c84fbd669dcd39618ed, type: 3}
+  - {fileID: 21300000, guid: 6ae3da909efd6bc49bbd9db57caf0631, type: 3}
   - {fileID: 21300000, guid: 9b2c821aa549b754aa404d4aa17d3eba, type: 3}
   - {fileID: 21300000, guid: 342693b192c5bd340a13fd9b23098ea2, type: 3}
   - {fileID: 21300000, guid: d919c76e039ae5d4bab455c9b5abb8b4, type: 3}
