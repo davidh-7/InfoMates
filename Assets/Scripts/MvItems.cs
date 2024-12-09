@@ -146,7 +146,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                     resultadoTotal = 0;
 
                     // Actualizar el texto del resultado en pantalla
-                    GameObject textResultado = GameObject.Find("TxtResultado");
+                  textResultado = GameObject.Find("TxtResultado");
                     if (textResultado != null)
                     {
                         textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
@@ -169,7 +169,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                     resultadoTotal = 0;
 
                     // Actualizar el texto del resultado en pantalla
-                    GameObject textResultado = GameObject.Find("TxtResultado");
+                   textResultado = GameObject.Find("TxtResultado");
                     if (textResultado != null)
                     {
                         textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
