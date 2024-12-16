@@ -34,6 +34,12 @@ public class ConBotones : MonoBehaviour
         SceneManager.LoadScene("EscenaTienda");
     }
 
+    //Atras
+    public void BotonAtras()
+    {
+        SceneManager.LoadScene("EscenaNiveles");
+    }
+
     public void ExitGame()
     {
 #if UNITY_EDITOR

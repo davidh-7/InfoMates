@@ -963,7 +963,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1652108983}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
-        m_MethodName: BotonExit
+        m_MethodName: BotonAtras
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

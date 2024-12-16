@@ -889,7 +889,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 277771829}
         m_TargetAssemblyTypeName: ConBotones, Assembly-CSharp
-        m_MethodName: BotonExit
+        m_MethodName: BotonAtras
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1082,7 +1082,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -8.500008, y: -0.000030517578}
+  m_AnchoredPosition: {x: -8.500008, y: -654.3373}
   m_SizeDelta: {x: 1426.7068, y: 591.2877}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1720578831

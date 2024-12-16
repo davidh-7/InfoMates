@@ -7,6 +7,7 @@ public class DatosGlobales : MonoBehaviour
     // Variables estáticas que mantienen los valores globales
     public static int vidas = 3;  // Vidas iniciales
     public static int puntos = 0; // Puntos iniciales
+    public static int monedero = 500; // Puntos iniciales
 
     // Instancia estática de la clase DatosGlobales
     public static DatosGlobales instancia;
