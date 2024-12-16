@@ -120,7 +120,7 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                         resultado = Mathf.Abs(valorMiNumero - valorOtroNumero);
                         break;
 
-                    case "*":
+                    case "x":
                         resultado = valorMiNumero * valorOtroNumero;
                         break;
 
