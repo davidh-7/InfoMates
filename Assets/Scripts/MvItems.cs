@@ -145,8 +145,11 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                     // Reiniciar el resultado total
                     resultadoTotal = 0;
 
+                    // Sumar 10 puntos a los DatosGlobales
+                    DatosGlobales.vidas --;
+
                     // Actualizar el texto del resultado en pantalla
-                  textResultado = GameObject.Find("TxtResultado");
+                    textResultado = GameObject.Find("TxtResultado");
                     if (textResultado != null)
                     {
                         textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
@@ -168,8 +171,11 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
                     // Reiniciar el resultado total
                     resultadoTotal = 0;
 
+                    // Sumar 10 puntos a los DatosGlobales
+                    DatosGlobales.puntos += 10;
+
                     // Actualizar el texto del resultado en pantalla
-                   textResultado = GameObject.Find("TxtResultado");
+                    textResultado = GameObject.Find("TxtResultado");
                     if (textResultado != null)
                     {
                         textResultado.GetComponent<TMPro.TextMeshProUGUI>().text = resultadoTotal.ToString();
