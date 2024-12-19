@@ -43,19 +43,19 @@ public class MostrarDatos : MonoBehaviour
         // Actualizar texto de puntos si el campo existe
         if (textPuntos != null)
         {
-            textPuntos.text = "Puntos: " + DatosGlobales.puntos.ToString();
+            textPuntos.text = "Punts: " + DatosGlobales.puntos.ToString();
         }
 
         // Actualizar texto de vidas si el campo existe
         if (textVidas != null)
         {
-            textVidas.text = "Vidas: " + DatosGlobales.vidas.ToString();
+            textVidas.text = "Vides: " + DatosGlobales.vidas.ToString();
         }
 
         // Actualizar texto de vidas si el campo existe
         if (textCoins != null)
         {
-            textCoins.text = "Monedas: " + DatosGlobales.monedero.ToString();
+            textCoins.text = "Monedes: " + DatosGlobales.monedero.ToString();
         }
     }
 }
