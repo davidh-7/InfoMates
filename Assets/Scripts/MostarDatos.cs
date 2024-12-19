@@ -2,40 +2,46 @@ using UnityEngine;
 
 public class MostrarDatos : MonoBehaviour
 {
+    private TMPro.TextMeshProUGUI textPuntos;
+    private TMPro.TextMeshProUGUI textVidas;
+
     void Start()
     {
-        // Actualiza los textos una vez al inicio
+        // Buscar los objetos de texto solo una vez al inicio
+        GameObject objPuntos = GameObject.Find("TxtPuntos");
+        if (objPuntos != null)
+        {
+            textPuntos = objPuntos.GetComponent<TMPro.TextMeshProUGUI>();
+        }
+
+        GameObject objVidas = GameObject.Find("TxtVidas");
+        if (objVidas != null)
+        {
+            textVidas = objVidas.GetComponent<TMPro.TextMeshProUGUI>();
+        }
+
+        // Actualizar los textos iniciales
         ActualizarTextos();
     }
 
     void Update()
     {
-        // Actualiza los textos en cada fotograma
+        // Actualiza los textos si los campos existen
         ActualizarTextos();
     }
 
     private void ActualizarTextos()
     {
-        // Buscar el objeto de texto para los puntos
-        GameObject textPuntos = GameObject.Find("TxtPuntos");
+        // Actualizar texto de puntos si el campo existe
         if (textPuntos != null)
         {
-            textPuntos.GetComponent<TMPro.TextMeshProUGUI>().text = "Puntos: " + DatosGlobales.puntos.ToString();
-        }
-        else
-        {
-            Debug.LogError("No se encontró el objeto TxtPuntos en la escena.");
+            textPuntos.text = "Puntos: " + DatosGlobales.puntos.ToString();
         }
 
-        // Buscar el objeto de texto para las vidas
-        GameObject textVidas = GameObject.Find("TxtVidas");
+        // Actualizar texto de vidas si el campo existe
         if (textVidas != null)
         {
-            textVidas.GetComponent<TMPro.TextMeshProUGUI>().text = "Vidas: " + DatosGlobales.vidas.ToString();
-        }
-        else
-        {
-            Debug.LogError("No se encontró el objeto TxtVidas en la escena.");
+            textVidas.text = "Vidas: " + DatosGlobales.vidas.ToString();
         }
     }
 }
