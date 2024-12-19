@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 519365233}
   - component: {fileID: 519365232}
   m_Layer: 5
-  m_Name: textCoins
+  m_Name: TxtCoins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -252,7 +252,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\xBF?\xBF?\xBF?\xBF?"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c34a93b621f572e498e54399b731625f, type: 2}
   m_sharedMaterial: {fileID: 1272825473929222691, guid: c34a93b621f572e498e54399b731625f, type: 2}
