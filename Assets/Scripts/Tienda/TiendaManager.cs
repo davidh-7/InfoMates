@@ -18,6 +18,7 @@ public class TiendaManager : MonoBehaviour
     void Start()
     {
         MostrarProductos(); // Mostrar los productos al inicio
+      
     }
 
     // Este método muestra todos los productos en la tienda
@@ -101,25 +102,38 @@ public class TiendaManager : MonoBehaviour
         return inventario.Contains(producto);
     }
 
+  
     // Método para manejar la compra del producto
     public void ComprarProducto(Producto producto)
     {
-   
-        // Si el producto no está en el inventario, se agrega con la cantidad 1
-        if (!contadorInventario.ContainsKey(producto))
+        // Verificar si el jugador tiene suficientes monedas
+        if (DatosGlobales.monedero >= producto.precio)
         {
-            contadorInventario[producto] = 1; // Inicializamos en 1
+            // Descontar las monedas del jugador
+            DatosGlobales.monedero -= producto.precio;
+
+            // Si el producto no está en el inventario, se agrega con la cantidad 1
+            if (!contadorInventario.ContainsKey(producto))
+            {
+                contadorInventario[producto] = 1; // Inicializamos en 1
+
+            }
+            else
+            {
+                contadorInventario[producto]++; // Incrementamos la cantidad
+            }
+
+            // Actualizamos la cantidad visual en el inventario
+            ActualizarInventarioVisual(producto);
+
+            Debug.Log("Compraste el producto: " + producto.nombre);
         }
         else
         {
-            contadorInventario[producto]++; // Incrementamos la cantidad
+            Debug.LogWarning("No tienes suficientes monedas para comprar este producto.");
         }
-
-        // Actualizamos la cantidad visual en el inventario
-        ActualizarInventarioVisual(producto);
-
-        Debug.Log("Compraste el producto: " + producto.nombre);
     }
+
 
 
     public int ObtenerCantidadProducto(Producto producto)

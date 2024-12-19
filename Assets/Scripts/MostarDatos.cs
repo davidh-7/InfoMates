@@ -4,6 +4,8 @@ public class MostrarDatos : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI textPuntos;
     private TMPro.TextMeshProUGUI textVidas;
+    private TMPro.TextMeshProUGUI textCoins;
+
 
     void Start()
     {
@@ -18,6 +20,11 @@ public class MostrarDatos : MonoBehaviour
         if (objVidas != null)
         {
             textVidas = objVidas.GetComponent<TMPro.TextMeshProUGUI>();
+        }
+        GameObject objCoins = GameObject.Find("TxtCoins");
+        if (objCoins != null)
+        {
+            textCoins = objCoins.GetComponent<TMPro.TextMeshProUGUI>();
         }
 
         // Actualizar los textos iniciales
@@ -42,6 +49,11 @@ public class MostrarDatos : MonoBehaviour
         if (textVidas != null)
         {
             textVidas.text = "Vidas: " + DatosGlobales.vidas.ToString();
+        }
+        // Actualizar texto de vidas si el campo existe
+        if (textCoins != null)
+        {
+            textVidas.text = "Monedas: " + DatosGlobales.monedero.ToString();
         }
     }
 }
