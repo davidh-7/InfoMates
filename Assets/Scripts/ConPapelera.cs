@@ -35,7 +35,7 @@ public class ConPapelera : MonoBehaviour
     {
         if (textoUsosRestantes != null)
         {
-            textoUsosRestantes.text = "Usos restants: " + usosRestantes;
+            textoUsosRestantes.text = "" + usosRestantes;
         }
     }
 }

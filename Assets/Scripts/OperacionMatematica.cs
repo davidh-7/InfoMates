@@ -35,7 +35,7 @@ public class OperacionMatematica : MonoBehaviour
                 break;
 
             case 2: // Multiplicación
-                simboloMatematico = "*";
+                simboloMatematico = "x";
                 // Generar un resultado deseado razonable que pueda alcanzarse multiplicando números entre 1 y 9
                 resultadoDeseado = Random.Range(1, 81);  // 9 * 9 = 81 es el valor máximo posible con números entre 1 y 9
                 break;
