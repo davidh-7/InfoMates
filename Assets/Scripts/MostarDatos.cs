@@ -21,6 +21,7 @@ public class MostrarDatos : MonoBehaviour
         {
             textVidas = objVidas.GetComponent<TMPro.TextMeshProUGUI>();
         }
+
         GameObject objCoins = GameObject.Find("TxtCoins");
         if (objCoins != null)
         {
@@ -50,10 +51,11 @@ public class MostrarDatos : MonoBehaviour
         {
             textVidas.text = "Vidas: " + DatosGlobales.vidas.ToString();
         }
+
         // Actualizar texto de vidas si el campo existe
         if (textCoins != null)
         {
-            textVidas.text = "Monedas: " + DatosGlobales.monedero.ToString();
+            textCoins.text = "Monedas: " + DatosGlobales.monedero.ToString();
         }
     }
 }
