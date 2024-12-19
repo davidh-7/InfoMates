@@ -5,7 +5,7 @@ using UnityEngine;
 public class DatosGlobales : MonoBehaviour
 {
     // Variables estáticas que mantienen los valores globales
-    public static int vidas = 3;  // Vidas iniciales
+    public static int vidas = 5;  // Vidas iniciales
     public static int puntos = 0; // Puntos iniciales
     public static int monedero = 500; // Puntos iniciales
 

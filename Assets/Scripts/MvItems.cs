@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 
 public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
@@ -147,6 +149,14 @@ public class MvItems : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragH
 
                     // Sumar 10 puntos a los DatosGlobales
                     DatosGlobales.vidas --;
+
+                    // Verificar si las vidas son 0
+                    if (DatosGlobales.vidas <= 0)
+                    {
+                        Debug.Log("¡Te has quedado sin vidas! Cambiando a la escena de Game Over.");
+                        SceneManager.LoadScene("EscenaEliminado"); 
+                        return;
+                    }
 
                     // Actualizar el texto del resultado en pantalla
                     textResultado = GameObject.Find("TxtResultado");
