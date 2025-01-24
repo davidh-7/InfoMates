@@ -1,55 +1,51 @@
-name: Move to "In Progress" on Assignment
+name: Move to "En Progreso" on Assignment
 
 on:
   issues:
-    types: [assigned] # Se activa cuando alguien es asignado a un issue
-  pull_request:
-    types: [assigned] # Se activa cuando alguien es asignado a un PR
+    types: [assigned]
 
 jobs:
   move-to-in-progress:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Move card to "En Progreso"
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        script: |
-          const projectId = 4; // Cambia este ID si tu proyecto no es el número 4
-          const columnName = 'En progreso'; // Cambia por el nombre exacto de tu columna
+    - name: Move item to "En Progreso"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Define el ID del proyecto y la columna destino
+        PROJECT_ID="PVT_kwHOCProrc4At2B_" # ID del proyecto identificado
+        COLUMN_NAME="En Progreso"        # Nombre exacto de la columna destino
 
-          // Obtén el proyecto personal
-          const projects = await github.projects.listForUser({
-            username: context.actor, // Usuario que activó el evento
-          });
+        # Obtén el ID del issue
+        ISSUE_ID=${{ github.event.issue.node_id }}
 
-          const project = projects.data.find(p => p.id === projectId);
+        # Consulta el ID del ítem en el proyecto
+        ITEM_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { id } } } } } } }"}' \
+          https://api.github.com/graphql | jq -r ".data.node.items.nodes[] | select(.content.id == \\\"$ISSUE_ID\\\") | .id")
 
-          if (!project) {
-            throw new Error(`No se encontró el proyecto con ID ${projectId}`);
-          }
+        if [ -z "$ITEM_ID" ]; then
+          echo "No se encontró el ítem asociado al issue #${{ github.event.issue.number }} en el proyecto."
+          exit 1
+        fi
 
-          // Obtén las columnas del proyecto
-          const columns = await github.projects.listColumns({
-            project_id: project.id,
-          });
+        # Consulta el ID de la columna "En Progreso"
+        COLUMN_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { columns(first: 10) { nodes { id name } } } } }"}' \
+          https://api.github.com/graphql | jq -r ".data.node.columns.nodes[] | select(.name == \\\"$COLUMN_NAME\\\") | .id")
 
-          const column = columns.data.find(c => c.name === columnName);
+        if [ -z "$COLUMN_ID" ]; then
+          echo "No se encontró la columna '$COLUMN_NAME' en el proyecto."
+          exit 1
+        fi
 
-          if (!column) {
-            throw new Error(`No se encontró la columna ${columnName}`);
-          }
+        # Mueve el ítem a la columna "En Progreso"
+        curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"mutation { moveProjectV2Item(input: { projectId: \\\"'"$PROJECT_ID"'\\\", itemId: \\\"'"$ITEM_ID"'\\\", targetColumnId: \\\"'"$COLUMN_ID"'\\\", position: TOP }) { clientMutationId } }"}' \
+          https://api.github.com/graphql
 
-          // Identificar el tipo de contenido (Issue o PR)
-          const contentId = context.payload.issue?.id || context.payload.pull_request?.id;
-          const contentType = context.payload.issue ? 'Issue' : 'PullRequest';
-
-          // Crear o mover la tarjeta a la columna "En Progreso"
-          await github.projects.createCard({
-            column_id: column.id,
-            content_id: contentId,
-            content_type: contentType,
-          });
-
-          console.log(`Tarjeta movida al estado "${columnName}" correctamente.`);
+        echo "El ítem se movió a la columna '$COLUMN_NAME'."
