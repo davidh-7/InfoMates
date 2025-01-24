@@ -15,6 +15,6 @@ jobs:
       - name: Actualizar ítem en el proyecto
         uses: srggrs/assign-one-project-github-action@v1
         with:
-          project_url: https://github.com/YerayRodriguez2005/Eco-del-Caos/projects/1
+          project_url: https://github.com/davidh-7/InfoMates.git/projects/1
           column_name: "En progreso"
           github_token: ${{ secrets.GITHUB_TOKEN }}
