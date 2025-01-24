@@ -1,0 +1,20 @@
+name: Mover a "En progreso" cuando se asigna
+
+on:
+  issues:
+    types:
+      - assigned
+
+jobs:
+  mover-a-progreso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mover ítem a "En progreso"
+        uses: actions/checkout@v3
+
+      - name: Actualizar ítem en el proyecto
+        uses: srggrs/assign-one-project-github-action@v1
+        with:
+          project_url: https://github.com/YerayRodriguez2005/Eco-del-Caos/projects/1
+          column_name: "En progreso"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
