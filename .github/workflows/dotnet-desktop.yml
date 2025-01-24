@@ -14,7 +14,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         # Define el ID del proyecto y la columna destino
-        PROJECT_ID="PVT_kwHOCProrc4At2B_" # ID del proyecto
+        PROJECT_ID="PVT_kwHOCProrc4AwsmN" # Nuevo ID del proyecto
         DONE_COLUMN_NAME="Done"           # Nombre exacto de la columna de completados
         TARGET_COLUMN_NAME="ds"           # Columna destino para ítems no completados
 
@@ -48,7 +48,7 @@ jobs:
               echo "Buscando el ítem en el proyecto para el issue #$ISSUE_NUMBER..."
               ITEM_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
                 -H "Content-Type: application/json" \
-                -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { id } } } } } } }"}' \
+                -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { id } } } } } }"}' \
                 https://api.github.com/graphql | jq -r ".data.node.items.nodes[] | select(.content.id == \\\"$ISSUE_ID\\\") | .id")
 
               if [ -z "$ITEM_ID" ]; then
