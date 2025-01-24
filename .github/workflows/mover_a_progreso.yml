@@ -14,14 +14,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: echo "Token configurado."
 
+      - name: Obtener ID de la columna "En Progreso"
+        id: obtener_columna
+        run: |
+          COLUMN_NAME="En Progreso"
+          QUERY='{
+            repository(owner: "davidh-7", name: "InfoMates") {
+              project(number: 4) {
+                columns(first: 100) {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }'
+          COLUMN_ID=$(curl -s -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/json" -d "{\"query\": \"$QUERY\"}" https://api.github.com/graphql | jq -r ".data.repository.project.columns.edges[] | select(.node.name == \"$COLUMN_NAME\") | .node.id")
+          echo "COLUMN_ID=$COLUMN_ID" >> $GITHUB_ENV
+
       - name: Mover ítem a la columna "En progreso"
         run: |
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/davidh-7/InfoMates/projects/columns/cards \
+            https://api.github.com/projects/columns/${{ env.COLUMN_ID }}/cards \
             -d '{
               "content_type": "Issue",
-              "content_id": "${{ github.event.issue.id }}",
-              "column_name": "En progreso"
+              "content_id": "${{ github.event.issue.id }}"
             }'
