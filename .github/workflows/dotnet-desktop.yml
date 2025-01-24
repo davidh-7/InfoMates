@@ -1,0 +1,92 @@
+name: Move Items from Expired Milestone to "ds"
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Ejecuta el workflow todos los días a la medianoche (UTC)
+
+jobs:
+  move-items:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Move items from expired milestones to "ds"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Define el ID del proyecto y la columna destino
+        PROJECT_ID="PVT_kwHOCProrc4At2B_" # ID del proyecto
+        DONE_COLUMN_NAME="Done"           # Nombre exacto de la columna de completados
+        TARGET_COLUMN_NAME="ds"           # Columna destino para ítems no completados
+
+        # Obtén todos los milestones del repositorio
+        echo "Obteniendo todos los milestones..."
+        MILESTONES=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/milestones)
+
+        # Procesa cada milestone
+        echo "Procesando milestones..."
+        for milestone in $(echo "$MILESTONES" | jq -c '.[]'); do
+          MILESTONE_TITLE=$(echo "$milestone" | jq -r '.title')
+          MILESTONE_DUE_DATE=$(echo "$milestone" | jq -r '.due_on')
+
+          # Verifica si el milestone ha expirado
+          if [ "$(date -d "$MILESTONE_DUE_DATE" +%s)" -lt "$(date +%s)" ]; then
+            echo "El milestone '$MILESTONE_TITLE' ha expirado."
+
+            # Encuentra los issues asociados al milestone
+            echo "Obteniendo issues para el milestone '$MILESTONE_TITLE'..."
+            ISSUES=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${{ github.repository }}/issues?milestone=$MILESTONE_TITLE)
+
+            for issue in $(echo "$ISSUES" | jq -c '.[]'); do
+              ISSUE_ID=$(echo "$issue" | jq -r '.node_id')
+              ISSUE_NUMBER=$(echo "$issue" | jq -r '.number')
+
+              # Encuentra el ítem asociado en el proyecto
+              echo "Buscando el ítem en el proyecto para el issue #$ISSUE_NUMBER..."
+              ITEM_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { id } } } } } } }"}' \
+                https://api.github.com/graphql | jq -r ".data.node.items.nodes[] | select(.content.id == \\\"$ISSUE_ID\\\") | .id")
+
+              if [ -z "$ITEM_ID" ]; then
+                echo "No se encontró el ítem asociado al issue #$ISSUE_NUMBER en el proyecto."
+                continue
+              fi
+
+              # Verifica si el ítem está en la columna "Done"
+              echo "Verificando si el ítem está en la columna '$DONE_COLUMN_NAME'..."
+              COLUMN_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { columns(first: 10) { nodes { id name } } } } }"}' \
+                https://api.github.com/graphql | jq -r ".data.node.columns.nodes[] | select(.name == \\\"$DONE_COLUMN_NAME\\\") | .id")
+
+              if [ -z "$COLUMN_ID" ]; then
+                echo "No se encontró la columna '$DONE_COLUMN_NAME'."
+                continue
+              fi
+
+              # Si no está en "Done", mover a "ds"
+              echo "Moviendo el ítem a la columna '$TARGET_COLUMN_NAME'..."
+              TARGET_COLUMN_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { columns(first: 10) { nodes { id name } } } } }"}' \
+                https://api.github.com/graphql | jq -r ".data.node.columns.nodes[] | select(.name == \\\"$TARGET_COLUMN_NAME\\\") | .id")
+
+              if [ -z "$TARGET_COLUMN_ID" ]; then
+                echo "No se encontró la columna '$TARGET_COLUMN_NAME'."
+                exit 1
+              fi
+
+              # Mueve el ítem a la columna "ds"
+              curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Content-Type: application/json" \
+                -d '{"query":"mutation { moveProjectV2Item(input: { projectId: \\\"'"$PROJECT_ID"'\\\", itemId: \\\"'"$ITEM_ID"'\\\", targetColumnId: \\\"'"$TARGET_COLUMN_ID"'\\\", position: TOP }) { clientMutationId } }"}' \
+                https://api.github.com/graphql
+
+              echo "El ítem asociado al issue #$ISSUE_NUMBER se movió a la columna '$TARGET_COLUMN_NAME'."
+            done
+          fi
+        done
