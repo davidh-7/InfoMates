@@ -1,0 +1,62 @@
+name: Move to "En Progreso" on Assignment
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  move-to-in-progress:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Move item to "En Progreso"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Define el ID del proyecto y el nombre de la columna
+        PROJECT_ID="PVT_kwHOCProrc4At2B_" # ID del proyecto identificado
+        COLUMN_NAME="En Progreso"        # Nombre exacto de la columna
+
+        # Obtén el ID del issue
+        ISSUE_ID=${{ github.event.issue.node_id }}
+
+        # Consulta el ID del ítem en el proyecto
+        ITEM_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { id } } } } } } }"}' \
+          https://api.github.com/graphql | jq -r ".data.node.items.nodes[] | select(.content.id == \\\"$ISSUE_ID\\\") | .id")
+
+        if [ -z "$ITEM_ID" ]; then
+          echo "No se encontró el ítem asociado al issue #${{ github.event.issue.number }} en el proyecto."
+          exit 1
+        fi
+
+        # Obtén el ID del campo de estado
+        FIELD_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"query { node(id: \\\"'"$PROJECT_ID"'\\\") { ... on ProjectV2 { fields(first: 20) { nodes { id name } } } } }"}' \
+          https://api.github.com/graphql | jq -r ".data.node.fields.nodes[] | select(.name == \\\"Status\\\") | .id")
+
+        if [ -z "$FIELD_ID" ]; then
+          echo "No se encontró el campo 'Status' en el proyecto."
+          exit 1
+        fi
+
+        # Obtén el ID de la opción "En Progreso"
+        OPTION_ID=$(curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"query { node(id: \\\"'"$FIELD_ID"'\\\") { ... on ProjectV2SingleSelectField { options { id name } } } }"}' \
+          https://api.github.com/graphql | jq -r ".data.node.options[] | select(.name == \\\"$COLUMN_NAME\\\") | .id")
+
+        if [ -z "$OPTION_ID" ]; then
+          echo "No se encontró la opción '$COLUMN_NAME' en el campo 'Status'."
+          exit 1
+        fi
+
+        # Actualiza el estado del ítem
+        curl -s -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{"query":"mutation { updateProjectV2ItemFieldValue(input: { projectId: \\\"'"$PROJECT_ID"'\\\", itemId: \\\"'"$ITEM_ID"'\\\", fieldId: \\\"'"$FIELD_ID"'\\\", value: { singleSelectOptionId: \\\"'"$OPTION_ID"'\\\" } }) { clientMutationId } }"}' \
+          https://api.github.com/graphql
+
+        echo "El ítem se movió a la columna '$COLUMN_NAME'."
