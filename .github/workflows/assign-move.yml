@@ -1,0 +1,55 @@
+name: Move to "In Progress" on Assignment
+
+on:
+  issues:
+    types: [assigned] # Se activa cuando alguien es asignado a un issue
+  pull_request:
+    types: [assigned] # Se activa cuando alguien es asignado a un PR
+
+jobs:
+  move-to-in-progress:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Move card to "En Progreso"
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        script: |
+          const projectId = 4; // Cambia este ID si tu proyecto no es el número 4
+          const columnName = 'En progreso'; // Cambia por el nombre exacto de tu columna
+
+          // Obtén el proyecto personal
+          const projects = await github.projects.listForUser({
+            username: context.actor, // Usuario que activó el evento
+          });
+
+          const project = projects.data.find(p => p.id === projectId);
+
+          if (!project) {
+            throw new Error(`No se encontró el proyecto con ID ${projectId}`);
+          }
+
+          // Obtén las columnas del proyecto
+          const columns = await github.projects.listColumns({
+            project_id: project.id,
+          });
+
+          const column = columns.data.find(c => c.name === columnName);
+
+          if (!column) {
+            throw new Error(`No se encontró la columna ${columnName}`);
+          }
+
+          // Identificar el tipo de contenido (Issue o PR)
+          const contentId = context.payload.issue?.id || context.payload.pull_request?.id;
+          const contentType = context.payload.issue ? 'Issue' : 'PullRequest';
+
+          // Crear o mover la tarjeta a la columna "En Progreso"
+          await github.projects.createCard({
+            column_id: column.id,
+            content_id: contentId,
+            content_type: contentType,
+          });
+
+          console.log(`Tarjeta movida al estado "${columnName}" correctamente.`);
